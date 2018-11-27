@@ -1,0 +1,9 @@
+{
+  "source": {
+    "type": "dmv",
+    "direction": "x",
+    "initial": [0, 2e-3, -3e-2],
+    "step": 5e-1,
+    "final": 3e1
+  }
+}

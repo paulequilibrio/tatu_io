@@ -1,21 +1,29 @@
 # Build directory path
 build = ../build
-src = ./source
 # Fortran Compiler
 fc = gfortran
-# Flags to Fortran Compiler
+# Fortran Compiler flags
 # -J specifies where to put .mod files for compiled modules
 flags = -J$(build) -std=f2008 -pedantic
 
-# Create build directory, if not exists
+# json_io modules files
+json_io_files = cli file input_types json_io
+# Object files relative to each source file in $(json_io_files)
+json_io = $(patsubst %, $(build)/%.o, $(json_io_files))
+
+# If not exist, create build directory
 $(shell mkdir -p $(build))
 
 
-$(build)/json_io.o: $(src)/json_io.f08 $(build)/json_module.o
-	$(fc) $(flags) -c $(<) -o $(@)
+default: jsonfortran $(json_io)
 
-$(build)/json_module.o:
+# Runs the first target of Makefile in ./json-fortran directory
+jsonfortran:
 	$(MAKE) -C json-fortran
+
+# Compile json_io files
+$(build)/%.o: source/%.f08
+	$(fc) $(flags) -c $(<) -o $(@)
 
 clean:
 	rm -rf $(build)

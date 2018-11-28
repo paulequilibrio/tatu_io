@@ -1,9 +1,25 @@
 {
   "source": {
-    "type": "dmv",
+    "model": "dehx",
     "direction": "x",
-    "initial": [4e-5, 2e-3, -3e-2],
-    "step": 5e-1,
-    "final": 3e1
+    "initial": [-5e3, 0, 9.7e3],
+    "step": 2.5e2,
+    "final": 5e3
+  },
+  "receiver": {
+    "direction": "x",
+    "initial": [-7e3, 0, 1e3],
+    "step": 5e2,
+    "final": 7e3
+  },
+  "frequency": {
+    "initial": 1e-1,
+    "samples": 3,
+    "final": 2.5e-1
+  },
+  "layers": {
+    "number": 3,
+    "resistivity": [0.3, 1e2, 1e3],
+    "thickness": [1e5, 5e2]
   }
 }

@@ -1,33 +1,34 @@
-build = './build'
+# Build directory path
+build = ./build
+# Fortran Compiler
+fc = gfortran
+# Flags to Fortran Compiler
+# -J specifies where to put .mod files for compiled modules
+flags = -J$(build) -std=f2008 -pedantic
 
+# Create build directory, if not exists
 $(shell mkdir -p $(build))
 
-$(build)/example.bin: $(build)/json_module.o $(build)/json_kinds.o $(build)/json_parameters.o $(build)/json_value_module.o $(build)/json_string_utilities.o $(build)/json_file_module.o $(build)/example1.o
-	gfortran -J$(build) -o $(@) $(^)
+# json_io dependencies
+json_io_files = json_io json_module json_kinds json_parameters json_value_module json_string_utilities json_file_module
+# Adds build path and .o extension to each one of json_io_files
+json_io = $(patsubst %, $(build)/%.o, $(json_io_files))
 
-# build/example1.o: example1.f08 build/json_module.o build/json_module.o build/json_kinds.o build/json_parameters.o build/json_value_module.o build/json_string_utilities.o build/json_file_module.o
-# 	gfortran -Jbuild -c $(<) -o $(@)
-#
-# build/json_module.o: build/json_kinds.o build/json_parameters.o build/json_value_module.o build/json_file_module.o
-# 	gfortran -Jbuild -c json_module.F90 -o $(@)
-#
-# build/json_kinds.o: json_kinds.F90
-# 	gfortran -Jbuild -c $(<) -o $(@)
-#
-# build/json_parameters.o: json_parameters.F90
-# 	gfortran -Jbuild -c $(<) -o $(@)
-#
-# build/json_value_module.o: json_value_module.F90 build/json_string_utilities.o
-# 	gfortran -Jbuild -c $(<) -o $(@)
-#
-# build/json_string_utilities.o: json_string_utilities.F90
-# 	gfortran -Jbuild -c $(<) -o $(@)
-#
-# build/json_file_module.o: json_file_module.F90
-# 	gfortran -Jbuild -c $(<) -o $(@)
 
-$(build)/json_module.o:
-	$(MAKE) -C json_io/json-fortran
+# Target to create executable binary
+example.bin: $(json_io) $(build)/example.o
+# $(@) represents the current target, in this case: $(@) = example.bin
+# $(^) represents all dependencies of the current target, in this case: all .o files
+	$(fc) $(flags) -o $(@) $(^)
+
+# Compile the main program
+$(build)/example.o: example.f08
+# $(<) represents the first dependency of the current target, in this case: $(<) = example.f08
+	$(fc) $(flags) -c $(<) -o $(@)
+
+# Runs the first target of Makefile in ./json_io directory
+$(build)/json_io.o:
+	$(MAKE) -C json_io
 
 clean:
-	rm -rf ./build
+	rm -rf $(build)

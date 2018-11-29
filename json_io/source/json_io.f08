@@ -4,8 +4,6 @@ module json_io
   use input_types
   use json_module
   implicit none
-  private
-  public json_io_get_input
 
 contains
 

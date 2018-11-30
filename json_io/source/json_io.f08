@@ -23,107 +23,77 @@ contains
     call json_io_get_input(read_input)
   end function read_input
 
+  ! TODO put in an input module and create an output module, too.
   module subroutine json_io_get_input(in)
     type(input), intent(out) :: in
-    type(point) :: initial
-    type(source) :: transmitter
     type(json_file) :: json
-    character(len=:), allocatable :: input_file, tempstr, name
-    real(kind(0d0)) :: tempreal
-    logical :: found
-
-    ! transmitter = source('', '', point(0, 0, 0), 0, 0)
-    ! in = input(transmitter)
+    character(len=:), allocatable :: input_file
+    real(real_dp), dimension(:), allocatable :: array
 
     input_file = cli_get_option_value('-i')
 
     call json%initialize()
     call json%load_file(filename = input_file)
-
-    ! call json%get('source.model', tempstr, found)
-    ! name = 'model'
-    ! if (found) then
-    !   in%source%model = tempstr
-    ! else
-    !   call error('source.model not found', input_file)
-    ! end if
-
-    call json%get('source.direction', tempstr, found)
-    if (found) then
-      in%source%direction = tempstr
-    else
-      call error('source.direction not found', input_file)
-    end if
-
-    call json%get('source.step', tempreal, found)
-    if (found) then
-      in%source%step = tempreal
-    else
-      call error('source.step not found', input_file)
-    end if
-
-    call json%get('source.final', tempreal, found)
-    if (found) then
-      in%source%final = tempreal
-    else
-      call error('source.final not found', input_file)
-    end if
-
-    call json%get('source.initial[1]', tempreal, found)
-    if (found) then
-      in%source%initial%x = tempreal
-    else
-      call error('source.initial.x not found', input_file)
-    end if
-
-    call json%get('source.initial[2]', tempreal, found)
-    if (found) then
-      in%source%initial%y = tempreal
-    else
-      call error('source.initial.y not found', input_file)
-    end if
-
-    call json%get('source.initial[3]', tempreal, found)
-    if (found) then
-      in%source%initial%z = tempreal
-    else
-      call error('source.initial.z not found', input_file)
-    end if
+    if (json%failed()) call error('reading error', input_file)
 
     in%source%model = get_string(json, 'source.model')
-    write(*,*) in%source%model
+    in%source%direction = get_string(json, 'source.direction')
+    in%source%step = get_real(json, 'source.step')
+    in%source%final = get_real(json, 'source.final')
+    array = get_array(json, 'source.initial')
+    in%source%initial = point(array(1), array(2), array(3))
 
-    ! initial = point(8d-1, 6d-1, 4d-1)
-    ! transmitter = source('dehx', 'x', initial, 3d-1, 9d0)
-    ! in = input(transmitter)
+    in%receiver%direction = get_string(json, 'receiver.direction')
+    in%receiver%step = get_real(json, 'receiver.step')
+    in%receiver%final = get_real(json, 'receiver.final')
+    array = get_array(json, 'receiver.initial')
+    in%receiver%initial = point(array(1), array(2), array(3))
 
-    ! initialize the class
+    in%frequency%initial = get_real(json, 'frequency.initial')
+    in%frequency%samples = get_real(json, 'frequency.samples')
+    in%frequency%final = get_real(json, 'frequency.final')
 
-    ! write(*,*) input_file
-    ! read the file
+    in%layers%number = get_real(json, 'layers.number')
+    in%layers%resistivity = get_array(json, 'layers.resistivity')
+    in%layers%thickness = get_array(json, 'layers.thickness')
 
-    ! print the file to the console
-    ! call json%print_file()
-    ! call json%get('source.model', in%source%model, found)
-    ! write(*,*) '  -i: '//cli_get_option_value('-i')
+    if (size(in%layers%resistivity) /= in%layers%number) call error('The resistivity array size must be equal to layers number.')
+
+    if (size(in%layers%thickness) /= int(in%layers%number) -1 ) then
+      call error('The thickness array size must be equal to layers number minus 1.')
+    end if
 
     call json%destroy()
-    if (json%failed()) stop -1
+    if (json%failed()) call error('error on destroy')
 
   end subroutine json_io_get_input
 
-
+  ! Try to create a generic interface get
   module function get_string(json, path)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
-    character(len=:), allocatable :: get_string, temp
+    character(len=:), allocatable :: get_string
     logical :: found
-    call json%get(path, temp, found)
-    if (found) then
-      get_string = temp
-    else
-      call error('"'//path//'" not found in input file')
-    end if
+    call json%get(path, get_string, found)
+    if (.not. found) call error('"'//path//'" not found in input file')
   end function get_string
+
+  module function get_real(json, path)
+    type(json_file), intent(inout) :: json
+    character(len=*), intent(in) :: path
+    real(real_dp) :: get_real
+    logical :: found
+    call json%get(path, get_real, found)
+    if (.not. found) call error('"'//path//'" not found in input file')
+  end function get_real
+
+  module function get_array(json, path)
+    type(json_file), intent(inout) :: json
+    character(len=*), intent(in) :: path
+    real(real_dp), dimension(:), allocatable :: get_array
+    logical :: found
+    call json%get(path, get_array, found)
+    if (.not. found) call error('"'//path//'" not found in input file')
+  end function get_array
 
 end module json_io

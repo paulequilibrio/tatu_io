@@ -1,27 +1,37 @@
 module input_types
-  integer, parameter :: input_dp = kind(1.d0)
+  integer, parameter :: real_dp = kind(1.d0)
 
   type :: point
-    real(input_dp) :: x
-    real(input_dp) :: y
-    real(input_dp) :: z
+    real(real_dp) :: x
+    real(real_dp) :: y
+    real(real_dp) :: z
   end type point
 
   type :: source
     character(5) :: model
-    character(1) :: direction
+    character :: direction
     type(point) initial
-    real(input_dp) :: step
-    real(input_dp) :: final
+    real(real_dp) :: step
+    real(real_dp) :: final
   end type source
 
   type :: receiver
+    character :: direction
+    type(point) initial
+    real(real_dp) :: step
+    real(real_dp) :: final
   end type receiver
 
   type :: frequency
+    real(real_dp) :: initial
+    real(real_dp) :: samples
+    real(real_dp) :: final
   end type frequency
 
   type :: layers
+    real(real_dp) :: number
+    real(real_dp), dimension(:), allocatable :: resistivity
+    real(real_dp), dimension(:), allocatable :: thickness
   end type layers
 
   type :: input

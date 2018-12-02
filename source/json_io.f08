@@ -3,11 +3,10 @@ module json_io
   use file
   use input_types
   use json_module
-  implicit none
 
 contains
 
-  module subroutine error(message, filename)
+  subroutine error(message, filename)
     character(len=*), intent(in) :: message
     character(len=*), intent(in), optional :: filename
     if (present(filename)) then
@@ -18,13 +17,13 @@ contains
     stop
   end subroutine
 
-  module function read_input()
+  function read_input()
     type(input) :: read_input
     call json_io_get_input(read_input)
   end function read_input
 
   ! TODO put in an input module and create an output module, too.
-  module subroutine json_io_get_input(in)
+  subroutine json_io_get_input(in)
     type(input), intent(out) :: in
     type(json_file) :: json
     character(len=:), allocatable :: input_file
@@ -69,7 +68,7 @@ contains
   end subroutine json_io_get_input
 
   ! Try to create a generic interface get
-  module function get_string(json, path)
+  function get_string(json, path)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
     character(len=:), allocatable :: get_string
@@ -78,7 +77,7 @@ contains
     if (.not. found) call error('"'//path//'" not found in input file')
   end function get_string
 
-  module function get_real(json, path)
+  function get_real(json, path)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
     real(real_dp) :: get_real
@@ -87,7 +86,7 @@ contains
     if (.not. found) call error('"'//path//'" not found in input file')
   end function get_real
 
-  module function get_array(json, path)
+  function get_array(json, path)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
     real(real_dp), dimension(:), allocatable :: get_array

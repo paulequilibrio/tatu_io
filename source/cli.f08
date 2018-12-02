@@ -1,8 +1,7 @@
 module cli
-  implicit none
 contains
 
-  module function cli_get_argument(index) result(argument)
+  function cli_get_argument(index) result(argument)
     implicit none
     integer, intent(in) :: index
     character(len=:), allocatable :: argument
@@ -12,7 +11,7 @@ contains
     call get_command_argument(index, value=argument)
   end function cli_get_argument
 
-  module function cli_get_option_value(option) result(value)
+  function cli_get_option_value(option) result(value)
     implicit none
     character(len=*), intent(in) :: option
     character(len=:), allocatable :: argument, value

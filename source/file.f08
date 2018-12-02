@@ -1,23 +1,21 @@
 module file
-  implicit none
-
 contains
 
-  module function file_already_exist(filepath) result(already_exist)
+  function file_already_exist(filepath) result(already_exist)
     implicit none
     character(len=*), intent(in) :: filepath
     logical :: already_exist
     inquire(file=filepath, exist=already_exist)
   end function file_already_exist
 
-  module function file_already_open(filepath) result(already_open)
+  function file_already_open(filepath) result(already_open)
     implicit none
     character(len=*), intent(in) :: filepath
     logical :: already_open
     inquire(file=filepath, opened=already_open)
   end function file_already_open
 
-  module function file_is_readable(filepath) result(is_readable)
+  function file_is_readable(filepath) result(is_readable)
     implicit none
     character(len=*), intent(in) :: filepath
     character(len=7) :: readable
@@ -26,7 +24,7 @@ contains
     is_readable = merge(.true., .false., readable == 'YES')
   end function file_is_readable
 
-  module function file_is_writable(filepath) result(is_writable)
+  function file_is_writable(filepath) result(is_writable)
     implicit none
     character(len=*), intent(in) :: filepath
     character(len=7) :: writable
@@ -37,6 +35,7 @@ contains
 
 
   subroutine file_write(fileunit, filepath, content)
+    implicit none
     integer, intent(in) :: fileunit
     character(len=*), intent(in) :: filepath, content
     open (unit=fileunit, file=trim(adjustl(filepath)))

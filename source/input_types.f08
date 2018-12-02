@@ -7,13 +7,13 @@ module input_types
     real(real_dp) :: z
   end type point
 
-  type :: source
+  type :: transmitter
     character(5) :: model
     character :: direction
     type(point) initial
     real(real_dp) :: step
     real(real_dp) :: final
-  end type source
+  end type transmitter
 
   type :: receiver
     character :: direction
@@ -35,7 +35,7 @@ module input_types
   end type layers
 
   type :: input
-    type(source) :: source
+    type(transmitter) :: transmitter
     type(receiver) :: receiver
     type(frequency) :: frequency
     type(layers) :: layers

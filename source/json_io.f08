@@ -36,12 +36,12 @@ contains
     call json%load_file(filename = input_file)
     if (json%failed()) call error('reading error', input_file)
 
-    in%source%model = get_string(json, 'source.model')
-    in%source%direction = get_string(json, 'source.direction')
-    in%source%step = get_real(json, 'source.step')
-    in%source%final = get_real(json, 'source.final')
-    array = get_array(json, 'source.initial')
-    in%source%initial = point(array(1), array(2), array(3))
+    in%transmitter%model = get_string(json, 'transmitter.model')
+    in%transmitter%direction = get_string(json, 'transmitter.direction')
+    in%transmitter%step = get_real(json, 'transmitter.step')
+    in%transmitter%final = get_real(json, 'transmitter.final')
+    array = get_array(json, 'transmitter.initial')
+    in%transmitter%initial = point(array(1), array(2), array(3))
 
     in%receiver%direction = get_string(json, 'receiver.direction')
     in%receiver%step = get_real(json, 'receiver.step')

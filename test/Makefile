@@ -1,5 +1,3 @@
-# Silent make output
-MAKEFLAGS += --silent
 # Source extension
 ext = f08
 # Test driver basename

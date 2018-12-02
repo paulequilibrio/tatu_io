@@ -14,8 +14,8 @@ program fruit_driver
   call test_file_is_writable
 
   call test_input_types_point
-  call test_input_types_source
-  call test_input_types_input
+  call test_input_types_transmitter
+  ! call test_input_types_input
 
   call fruit_summary
   call fruit_finalize

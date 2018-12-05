@@ -26,6 +26,20 @@ contains
     call assert_equals(4d0, src%final)
   end subroutine test_input_types_transmitter
 
+  subroutine test_input_types_receiver
+    use input_types, only: point, receiver
+    type(point) :: initial
+    type(receiver) :: rec
+    initial = point(-3d0, -2d0, -1d0)
+    rec = receiver('x', initial, 5d-1, 4d0)
+    call assert_equals('x', rec%direction)
+    call assert_equals(-3d0, rec%initial%x)
+    call assert_equals(-2d0, rec%initial%y)
+    call assert_equals(-1d0, rec%initial%z)
+    call assert_equals(5d-1, rec%step)
+    call assert_equals(4d0, rec%final)
+  end subroutine test_input_types_receiver
+
   ! subroutine test_input_types_input
   !   use input_types
   !   type(point) :: initial

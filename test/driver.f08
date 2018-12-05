@@ -3,6 +3,7 @@ program fruit_driver
   use test_cli
   use test_file
   use test_input_types
+  use test_output
   call init_fruit(1)
 
   call test_cli_get_argument

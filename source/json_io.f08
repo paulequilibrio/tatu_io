@@ -1,8 +1,9 @@
 module json_io
+  use json_module
   use cli
   use file
   use input_types
-  use json_module
+  use output
 
 contains
 

@@ -7,7 +7,7 @@ fc = gfortran
 flags = -J$(build) -std=f2008 -pedantic
 
 # json_io modules files
-json_io_files = cli file input_types json_io
+json_io_files = cli file input_types output json_io
 # Object files relative to each source file in $(json_io_files)
 json_io = $(patsubst %, $(build)/%.o, $(json_io_files))
 

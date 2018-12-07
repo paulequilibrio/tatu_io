@@ -1,4 +1,5 @@
 module file
+
 contains
 
   function file_already_exist(filepath) result(already_exist)
@@ -33,13 +34,13 @@ contains
     is_writable = merge(.true., .false., writable == 'YES')
   end function file_is_writable
 
+  ! subroutine file_write(fileunit, filepath, content)
+  !   implicit none
+  !   integer, intent(in) :: fileunit
+  !   character(len=*), intent(in) :: filepath, content
+  !   open (unit=fileunit, file=trim(adjustl(filepath)))
+  !   write(fileunit, *) trim(adjustl(content))
+  !   close(fileunit)
+  ! end subroutine file_write
 
-  subroutine file_write(fileunit, filepath, content)
-    implicit none
-    integer, intent(in) :: fileunit
-    character(len=*), intent(in) :: filepath, content
-    open (unit=fileunit, file=trim(adjustl(filepath)))
-    write(fileunit, *) trim(adjustl(content))
-    close(fileunit)
-  end subroutine file_write
 end module file

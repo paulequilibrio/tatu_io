@@ -6,16 +6,18 @@ fc = gfortran
 # -J specifies where to put .mod files for compiled modules
 flags = -J$(build) -std=f2008 -pedantic
 
-# json_io modules files
-json_io_files = cli file input_types output json_io
-# Object files relative to each source file in $(json_io_files)
-json_io = $(patsubst %, $(build)/%.o, $(json_io_files))
-
 # If not exist, create build directory
 $(shell mkdir -p $(build))
 
+# json-fortran variable from file
+include json-fortran/dependencies.make
+# json_io variable from file
+include ./dependencies.make
+# Object files relative to each source file in $(json_io)
+json_io.o = $(patsubst %, $(build)/%.o, $(json_io))
 
-default: jsonfortran $(json_io)
+
+default: jsonfortran $(json_io.o)
 
 # Runs the first target of Makefile in ./json-fortran directory
 jsonfortran:

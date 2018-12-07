@@ -1,4 +1,4 @@
-module input_types
+module types
   integer, parameter :: real_dp = kind(1.d0)
 
   type :: point
@@ -23,22 +23,28 @@ module input_types
   end type receiver
 
   type :: frequency
+    integer :: samples
     real(real_dp) :: initial
-    real(real_dp) :: samples
     real(real_dp) :: final
   end type frequency
 
   type :: layers
-    real(real_dp) :: number
+    integer :: number
     real(real_dp), dimension(:), allocatable :: resistivity
     real(real_dp), dimension(:), allocatable :: thickness
   end type layers
 
-  type :: input
+  type :: json_input
     type(transmitter) :: transmitter
     type(receiver) :: receiver
     type(frequency) :: frequency
     type(layers) :: layers
-  end type input
+  end type json_input
 
-end module input_types
+  type :: json_output
+    type(json_input) :: input
+    character(:), dimension(:), allocatable :: labels
+    real(real_dp), dimension(:), allocatable :: values
+  end type json_output
+
+end module types

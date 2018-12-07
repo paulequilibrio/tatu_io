@@ -1,13 +1,13 @@
 module test_output
   use fruit
-  implicit none
+
 contains
 
-  subroutine test_output_create_root
-    use output, only: create_root
+  subroutine test_output_write
+    use output, only: write_output
     ! character(len=:), allocatable :: argument
     ! argument = cli_get_argument(0)
     ! call assert_equals('./driver.bin', argument)
-  end subroutine test_output_create_root
+  end subroutine test_output_write
 
 end module test_output

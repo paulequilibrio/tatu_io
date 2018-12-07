@@ -1,11 +1,17 @@
 module output
   use json_module
-  contains
+  use types
 
-  function create_root(variables)
+contains
 
-  end function create_root
+  ! function create_root(variables)
+  ! end function create_root
 
+  subroutine output_write(out)
+    real(real_dp), dimension(:,:), intent(in) :: out
+    type(json_output) :: json
+    write(*,*) out(1,:)
+  end subroutine output_write
 
   ! ! call core%initialize()
   ! call core%create_object(output, '')

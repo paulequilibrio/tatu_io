@@ -1,4 +1,5 @@
 module cli
+
 contains
 
   function cli_get_argument(index) result(argument)

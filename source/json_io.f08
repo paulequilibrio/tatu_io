@@ -7,9 +7,10 @@ module json_io
 
 contains
 
-  function json_io_read_input() ! add input file as argument
+  function json_io_read_input(input_file) ! add input file as argument
+    character(len=*), intent(in) :: input_file
     type(json_input) :: json_io_read_input
-    call json_io_get_input(json_io_read_input)
+    call json_io_get_input(input_file, json_io_read_input)
   end function json_io_read_input
 
   subroutine json_io_write_output(out)

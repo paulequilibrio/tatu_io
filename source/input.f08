@@ -3,54 +3,17 @@ module input
   use types
   use cli
 
+  interface json_io_get
+    module procedure json_io_get_string
+    module procedure json_io_get_integer
+    module procedure json_io_get_real
+    module procedure json_io_get_real_array
+    module procedure json_io_get_real_point
+  end interface json_io_get
+
 contains
 
-  subroutine json_io_get_input(in)
-    type(json_input), intent(out) :: in
-    type(json_file) :: json
-    character(len=:), allocatable :: input_file
-    real(real_dp), dimension(:), allocatable :: array
-
-    input_file = cli_get_option_value('-i')
-
-    call json%initialize()
-    call json%load_file(filename = input_file)
-    if (json%failed()) call error('reading error', input_file)
-
-    ! call json%print_file()
-
-    in%transmitter%model = get_string(json, 'transmitter.model')
-    in%transmitter%direction = get_string(json, 'transmitter.direction')
-    in%transmitter%step = get_real(json, 'transmitter.step')
-    in%transmitter%final = get_real(json, 'transmitter.final')
-    array = get_array(json, 'transmitter.initial')
-    in%transmitter%initial = point(array(1), array(2), array(3))
-
-    in%receiver%direction = get_string(json, 'receiver.direction')
-    in%receiver%step = get_real(json, 'receiver.step')
-    in%receiver%final = get_real(json, 'receiver.final')
-    array = get_array(json, 'receiver.initial')
-    in%receiver%initial = point(array(1), array(2), array(3))
-
-    in%frequency%initial = get_real(json, 'frequency.initial')
-    in%frequency%samples = get_real(json, 'frequency.samples')
-    in%frequency%final = get_real(json, 'frequency.final')
-
-    in%layers%number = get_real(json, 'layers.number')
-    in%layers%resistivity = get_array(json, 'layers.resistivity')
-    in%layers%thickness = get_array(json, 'layers.thickness')
-
-    if (size(in%layers%resistivity) /= in%layers%number) call error('The resistivity array size must be equal to layers number.')
-
-    if (size(in%layers%thickness) /= int(in%layers%number) -1 ) then
-      call error('The thickness array size must be equal to layers number minus 1.')
-    end if
-
-    call json%destroy()
-    if (json%failed()) call error('error on destroy')
-
-  end subroutine json_io_get_input
-
+  ! IDEA Maybe create a generic interface for error
   subroutine error(message, filename)
     character(len=*), intent(in) :: message
     character(len=*), intent(in), optional :: filename
@@ -62,32 +25,99 @@ contains
     stop
   end subroutine
 
-  ! Try to create a generic interface get
-  function get_string(json, path)
-    type(json_file), intent(inout) :: json
+  subroutine path_not_found(path)
     character(len=*), intent(in) :: path
-    character(len=:), allocatable :: get_string
-    logical :: found
-    call json%get(path, get_string, found)
-    if (.not. found) call error('"'//path//'" not found in input file')
-  end function get_string
+    call error('"'//path//'" not found in input file')
+  end subroutine path_not_found
 
-  function get_real(json, path)
-    type(json_file), intent(inout) :: json
-    character(len=*), intent(in) :: path
-    real(real_dp) :: get_real
-    logical :: found
-    call json%get(path, get_real, found)
-    if (.not. found) call error('"'//path//'" not found in input file')
-  end function get_real
+  ! TODO Split and separeted procedures to each input file session
+  subroutine json_io_get_input(input_file, in)
+    character(len=*), intent(in) :: input_file
+    type(json_input), intent(out) :: in
+    type(json_file) :: json
 
-  function get_array(json, path)
+    call json%initialize()
+    call json%load_file(filename = input_file)
+    if (json%failed()) call error('reading error', input_file)
+    ! call json%print_file()
+
+    call json_io_get(json, 'transmitter.model', in%transmitter%model)
+    call json_io_get(json, 'transmitter.direction', in%transmitter%direction)
+    call json_io_get(json, 'transmitter.step', in%transmitter%step)
+    call json_io_get(json, 'transmitter.final', in%transmitter%final)
+    call json_io_get(json, 'transmitter.initial', in%transmitter%initial)
+
+    call json_io_get(json, 'receiver.direction', in%receiver%direction)
+    call json_io_get(json, 'receiver.step', in%receiver%step)
+    call json_io_get(json, 'receiver.final', in%receiver%final)
+    call json_io_get(json, 'receiver.initial', in%receiver%initial)
+
+    call json_io_get(json, 'frequency.initial', in%frequency%initial)
+    call json_io_get(json, 'frequency.samples', in%frequency%samples)
+    call json_io_get(json, 'frequency.final', in%frequency%final)
+
+    call json_io_get(json, 'layers.number', in%layers%number)
+    call json_io_get(json, 'layers.resistivity', in%layers%resistivity)
+    call json_io_get(json, 'layers.thickness', in%layers%thickness)
+
+    if (size(in%layers%resistivity) /= in%layers%number) call error('The resistivity array size must be equal to layers number.')
+
+    if (size(in%layers%thickness) /= int(in%layers%number) -1 ) then
+      call error('The thickness array size must be equal to layers number minus 1.')
+    end if
+
+    call json%destroy()
+    if (json%failed()) call error('error on destroy')
+  end subroutine json_io_get_input
+
+
+  subroutine json_io_get_string(json, path, json_io_string)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
-    real(real_dp), dimension(:), allocatable :: get_array
+    character(len=*), intent(out) :: json_io_string
+    character(len=:), allocatable :: temp
     logical :: found
-    call json%get(path, get_array, found)
-    if (.not. found) call error('"'//path//'" not found in input file')
-  end function get_array
+    call json%get(path, temp, found)
+    json_io_string = temp
+    if (.not. found) call path_not_found(path)
+  end subroutine json_io_get_string
+
+  subroutine json_io_get_integer(json, path, json_io_integer)
+    type(json_file), intent(inout) :: json
+    character(len=*), intent(in) :: path
+    integer, intent(out) :: json_io_integer
+    logical :: found
+    call json%get(path, json_io_integer, found)
+    if (.not. found) call path_not_found(path)
+  end subroutine json_io_get_integer
+
+  subroutine json_io_get_real(json, path, json_io_real)
+    type(json_file), intent(inout) :: json
+    character(len=*), intent(in) :: path
+    real(real_dp), intent(out) :: json_io_real
+    logical :: found
+    call json%get(path, json_io_real, found)
+    if (.not. found) call path_not_found(path)
+  end subroutine json_io_get_real
+
+  subroutine json_io_get_real_array(json, path, json_io_real_array)
+    type(json_file), intent(inout) :: json
+    character(len=*), intent(in) :: path
+    real(real_dp), dimension(:), allocatable, intent(out) :: json_io_real_array
+    logical :: found
+    call json%get(path, json_io_real_array, found)
+    if (.not. found) call path_not_found(path)
+  end subroutine json_io_get_real_array
+
+  subroutine json_io_get_real_point(json, path, json_io_real_point)
+    type(json_file), intent(inout) :: json
+    character(len=*), intent(in) :: path
+    type(point), intent(out) :: json_io_real_point
+    real(real_dp), dimension(:), allocatable :: array
+    logical :: found
+    call json%get(path, array, found)
+    if (.not. found) call path_not_found(path)
+    json_io_real_point = point(array(1), array(2), array(3))
+  end subroutine json_io_get_real_point
 
 end module input

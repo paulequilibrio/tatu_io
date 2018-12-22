@@ -31,7 +31,6 @@ contains
 
     call core%destroy(root)
     if (core%failed()) stop 'Error on destroy output root'
-    ! if (core%failed()) call error('error on destroy')
   end subroutine output_write
 
 
@@ -117,17 +116,15 @@ contains
     type(json_value), pointer, intent(in) :: output
     character(len=*), dimension(:), intent(in) :: labels
     type(json_core) :: core
-    logical(json_LK) :: found
-    integer :: int_index, limit
-    type(json_value), pointer :: element, new
-    character(len=10) :: index
-    call core%add(output, 'labels', [trim(labels(1))])
-    limit = size(labels) - 1
-    do int_index = 1, limit
-      write(index , '(i2)') int_index
-      call core%get(output, 'labels('//index//')', element, found)
-      call core%create_string(new, trim(labels(int_index+1)), '')
-      call core%insert_after(element, new)
+    type(json_value), pointer :: array
+    integer :: index, limit
+
+    call core%create_array(array, 'labels')
+    call core%add(output, array)
+
+    limit = size(labels)
+    do index = 1, limit
+      call core%add(array, '', trim(labels(index)))
     end do
   end subroutine write_output_labels
 
@@ -135,11 +132,13 @@ contains
     type(json_value), pointer, intent(in) :: output
     real(real_dp), dimension(:,:), intent(in) :: values
     type(json_core) :: core
+    type(json_value), pointer :: array
     integer, dimension(2) :: values_shape
     integer :: index, limit
-    type(json_value), pointer :: array
+
     call core%create_array(array, 'values')
     call core%add(output, array)
+
     values_shape = shape(values)
     limit = values_shape(1)
     do index = 1, limit

@@ -32,6 +32,9 @@ module types
     integer :: number
     real(real_dp), dimension(:), allocatable :: resistivity
     real(real_dp), dimension(:), allocatable :: thickness
+  ! contains
+  !   generic :: write => write_layers
+  !   procedure :: write_layers
   end type layers
 
   type :: json_input
@@ -46,5 +49,11 @@ module types
     character(:), dimension(:), allocatable :: labels
     real(real_dp), dimension(:), allocatable :: values
   end type json_output
+
+! contains
+!   subroutine write_layers(this)
+!     class(layers), intent(in) :: this
+!      write(*,*) this%number, SIZE(this%resistivity), SIZE(this%thickness)
+!   end subroutine write_layers
 
 end module types

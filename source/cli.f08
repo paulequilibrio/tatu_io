@@ -1,5 +1,7 @@
 module cli
-
+! TODO put in a separeted module (outside of json_io)
+! and make handle cli options like version and help
+! TODO wirte man page
 contains
 
   function cli_get_argument(index) result(argument)

@@ -1,7 +1,6 @@
 module input
   use json_module
   use types
-  use cli
 
   interface json_io_get
     module procedure json_io_get_string

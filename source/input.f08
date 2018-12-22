@@ -38,7 +38,6 @@ contains
     call json%initialize()
     call json%load_file(filename = input_file)
     if (json%failed()) call error('reading error', input_file)
-    ! call json%print_file()
 
     call json_io_get(json, 'transmitter.model', in%transmitter%model)
     call json_io_get(json, 'transmitter.direction', in%transmitter%direction)
@@ -59,9 +58,11 @@ contains
     call json_io_get(json, 'layers.resistivity', in%layers%resistivity)
     call json_io_get(json, 'layers.thickness', in%layers%thickness)
 
-    if (size(in%layers%resistivity) /= in%layers%number) call error('The resistivity array size must be equal to layers number.')
+    if (size(in%layers%resistivity) /= in%layers%number) then
+      call error('The resistivity array size must be equal to layers number.')
+    end if
 
-    if (size(in%layers%thickness) /= int(in%layers%number) -1 ) then
+    if (size(in%layers%thickness) /= int(in%layers%number) -1) then
       call error('The thickness array size must be equal to layers number minus 1.')
     end if
 

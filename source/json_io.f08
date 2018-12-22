@@ -3,7 +3,6 @@ module json_io
   use types
   use input
   use output
-  integer, parameter :: real_double_precision = kind(1.d0)
 
 contains
 

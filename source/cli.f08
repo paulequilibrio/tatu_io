@@ -1,11 +1,9 @@
 module cli
-! TODO put in a separeted module (outside of json_io)
-! and make handle cli options like version and help
-! TODO wirte man page
+! TODO make handle cli options like version and help
+! TODO write man page
 contains
 
   function cli_get_argument(index) result(argument)
-    implicit none
     integer, intent(in) :: index
     character(len=:), allocatable :: argument
     integer :: argument_length
@@ -15,7 +13,6 @@ contains
   end function cli_get_argument
 
   function cli_get_option_value(option) result(value)
-    implicit none
     character(len=*), intent(in) :: option
     character(len=:), allocatable :: argument, value
     integer :: index
@@ -25,7 +22,6 @@ contains
         value = cli_get_argument(index + 1)
         return
       end if flag
-      ! deallocate(argument)
     end do
   end function cli_get_option_value
 

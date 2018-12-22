@@ -15,7 +15,6 @@ contains
     type(json_core) :: core
     type(json_value), pointer :: root, input, output
 
-    write(*,*) '[ INFO ] Creating output...'
     call core%initialize()
     call core%create_object(root, '')
 
@@ -27,7 +26,6 @@ contains
     call core%add(root, output)
     call write_output(output, labels, values)
     call core%print(root, trim(adjustl(output_file)))
-    write(*,*) '[ DONE ] Output created'
 
     call core%destroy(root)
     if (core%failed()) stop 'Error on destroy output root'

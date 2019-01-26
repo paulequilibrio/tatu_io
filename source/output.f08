@@ -6,17 +6,24 @@ module output
 
 contains
 
-  subroutine output_write(output_file, in, labels, values)
+  subroutine output_write(output_file, in, labels, values, u_transmitter, u_frequency, u_receiver)
     character(len=*), intent(in) :: output_file
     type(json_input), intent(in) :: in
     character(len=*), dimension(:), intent(in) :: labels
     real(real_dp), dimension(:,:), intent(in) :: values
+    real(real_dp), dimension(:,:), intent(in) :: u_transmitter
+    real(real_dp), dimension(:), intent(in) :: u_frequency
+    real(real_dp), dimension(:,:), intent(in) :: u_receiver
 
     type(json_core) :: core
-    type(json_value), pointer :: root, input, output
+    type(json_value), pointer :: root, input, output, unique
 
     call core%initialize()
     call core%create_object(root, '')
+
+    call core%create_object(unique, 'unique')
+    call core%add(root, unique)
+    call write_unique(unique, u_transmitter, u_frequency, u_receiver)
 
     call core%create_object(input, 'input')
     call core%add(root, input)
@@ -143,5 +150,41 @@ contains
       call core%add(array, '', values(index,:))
     end do
   end subroutine write_output_values
+
+
+  subroutine write_unique(unique, u_transmitter, u_frequency, u_receiver)
+    type(json_value), pointer, intent(in) :: unique
+    real(real_dp), dimension(:,:), intent(in) :: u_transmitter
+    real(real_dp), dimension(:), intent(in) :: u_frequency
+    real(real_dp), dimension(:,:), intent(in) :: u_receiver
+    type(json_core) :: core
+    type(json_value), pointer :: transmitter_array, frequency_array, receiver_array
+    integer, dimension(:), allocatable :: transmitter_shape, frequency_shape, receiver_shape
+    integer :: index, transmitter_limit, frequency_limit, receiver_limit
+
+    call core%create_array(transmitter_array, 'transmitter')
+    call core%add(unique, transmitter_array)
+    transmitter_shape = shape(u_transmitter)
+    transmitter_limit = transmitter_shape(1)
+    do index = 1, transmitter_limit
+      call core%add(transmitter_array, '', u_transmitter(index,:))
+    end do
+
+    call core%create_array(frequency_array, 'frequency')
+    call core%add(unique, frequency_array)
+    frequency_shape = shape(u_frequency)
+    frequency_limit = frequency_shape(1)
+    do index = 1, frequency_limit
+      call core%add(frequency_array, '', u_frequency(index))
+    end do
+
+    call core%create_array(receiver_array, 'receiver')
+    call core%add(unique, receiver_array)
+    receiver_shape = shape(u_receiver)
+    receiver_limit = receiver_shape(1)
+    do index = 1, receiver_limit
+      call core%add(receiver_array, '', u_receiver(index,:))
+    end do
+  end subroutine write_unique
 
 end module output

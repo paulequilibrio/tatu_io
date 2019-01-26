@@ -1,18 +1,18 @@
-module test_input_types
+module test_types
   use fruit
   implicit none
 contains
 
-  subroutine test_input_types_point
-    use input_types, only: point
+  subroutine test_types_point
+    use types, only: point
     type(point) :: initial = point(1d0, 2d0, 3d0)
     call assert_equals(1d0, initial%x)
     call assert_equals(2d0, initial%y)
     call assert_equals(3d0, initial%z)
-  end subroutine test_input_types_point
+  end subroutine test_types_point
 
-  subroutine test_input_types_transmitter
-    use input_types, only: point, transmitter
+  subroutine test_types_transmitter
+    use types, only: point, transmitter
     type(point) :: initial
     type(transmitter) :: src
     initial = point(-3d0, -2d0, -1d0)
@@ -24,10 +24,10 @@ contains
     call assert_equals(-1d0, src%initial%z)
     call assert_equals(5d-1, src%step)
     call assert_equals(4d0, src%final)
-  end subroutine test_input_types_transmitter
+  end subroutine test_types_transmitter
 
-  subroutine test_input_types_receiver
-    use input_types, only: point, receiver
+  subroutine test_types_receiver
+    use types, only: point, receiver
     type(point) :: initial
     type(receiver) :: rec
     initial = point(-3d0, -2d0, -1d0)
@@ -38,10 +38,10 @@ contains
     call assert_equals(-1d0, rec%initial%z)
     call assert_equals(5d-1, rec%step)
     call assert_equals(4d0, rec%final)
-  end subroutine test_input_types_receiver
+  end subroutine test_types_receiver
 
-  ! subroutine test_input_types_input
-  !   use input_types
+  ! subroutine test_types_input
+  !   use types
   !   type(point) :: initial
   !   type(transmitter) :: src
   !   type(input) :: in
@@ -55,6 +55,6 @@ contains
   !   call assert_equals(4d-1, in%transmitter%initial%z)
   !   call assert_equals(3d-1, in%transmitter%step)
   !   call assert_equals(9d0, in%transmitter%final)
-  ! end subroutine test_input_types_input
+  ! end subroutine test_types_input
 
-end module test_input_types
+end module test_types

@@ -2,7 +2,7 @@ program fruit_driver
   use fruit
   use test_cli
   use test_file
-  use test_input_types
+  use test_types
   use test_output
   call init_fruit(1)
 
@@ -14,9 +14,9 @@ program fruit_driver
   call test_file_is_readable
   call test_file_is_writable
 
-  call test_input_types_point
-  call test_input_types_transmitter
-  call test_input_types_receiver
+  call test_types_point
+  call test_types_transmitter
+  call test_types_receiver
 
   call fruit_summary
   call fruit_finalize

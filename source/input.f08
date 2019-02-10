@@ -14,8 +14,6 @@ module input
     module procedure json_io_input_get_type_string
     module procedure json_io_input_get_type_integer
     module procedure json_io_input_get_type_realdp
-    ! module procedure json_io_get_real_array
-    ! module procedure json_io_get_real_point
   end interface json_io_input_get_type
 
 contains
@@ -32,10 +30,12 @@ contains
     stop
   end subroutine
 
+
   subroutine path_not_found(path)
     character(len=*), intent(in) :: path
     call error('"'//path//'": expected a numeric value')
   end subroutine path_not_found
+
 
   ! TODO Split and separeted procedures to each input file session
   subroutine json_io_get_input(input_file, in)
@@ -135,6 +135,7 @@ contains
     if (json%failed()) call error('error on destroy')
   end subroutine json_io_get_input
 
+
   subroutine json_io_get_string(json, path, json_io_string)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
@@ -146,6 +147,7 @@ contains
     if (.not. found) call path_not_found(path)
   end subroutine json_io_get_string
 
+
   subroutine json_io_get_integer(json, path, json_io_integer)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
@@ -154,6 +156,7 @@ contains
     call json%get(path, json_io_integer, found)
     if (.not. found) call path_not_found(path)
   end subroutine json_io_get_integer
+
 
   subroutine json_io_get_real(json, path, json_io_real)
     type(json_file), intent(inout) :: json
@@ -164,6 +167,7 @@ contains
     if (.not. found) call path_not_found(path)
   end subroutine json_io_get_real
 
+
   subroutine json_io_get_real_array(json, path, json_io_real_array)
     type(json_file), intent(inout) :: json
     character(len=*), intent(in) :: path
@@ -172,6 +176,7 @@ contains
     call json%get(path, json_io_real_array, found)
     if (.not. found) call path_not_found(path)
   end subroutine json_io_get_real_array
+
 
   subroutine json_io_get_real_point(json, path, json_io_real_point)
     type(json_file), intent(inout) :: json
@@ -184,41 +189,30 @@ contains
     json_io_real_point = point(array(1), array(2), array(3))
   end subroutine json_io_get_real_point
 
+
   function json_io_input_check_transmitter_model(model) result(isvalid)
     character(len=*), intent(in) :: model
     logical :: isvalid
     select case (model)
-      case ('hedx')
-        isvalid = .true.
-      case ('hedy')
-        isvalid = .true.
-      case ('ved')
-        isvalid = .true.
-      case ('hmdx')
-        isvalid = .true.
-      case ('hmdy')
-        isvalid = .true.
-      case ('vmd')
+    case ('hedx', 'hedy', 'ved', 'hmdx', 'hmdy', 'vmd')
         isvalid = .true.
       case default
         isvalid = .false.
     end select
   end function json_io_input_check_transmitter_model
 
+
   function json_io_input_check_direction(direction) result(isvalid)
     character(len=*), intent(in) :: direction
     logical :: isvalid
     select case (direction)
-      case ('x')
-        isvalid = .true.
-      case ('y')
-        isvalid = .true.
-      case ('z')
+    case ('x', 'y', 'z')
         isvalid = .true.
       case default
         isvalid = .false.
     end select
   end function json_io_input_check_direction
+
 
   function json_io_input_check_step(initial, step, final) result(isvalid)
     real(real_dp) :: initial, step, final
@@ -234,31 +228,30 @@ contains
     end if
   end function json_io_input_check_step
 
+
   function json_io_input_get_type_string(value) result(type)
     character(len=*), intent(in) :: value
-    character(len=128) :: newvalue
+    character(len=128) :: unused
     character(len=6) :: type
     type = 'string'
-    newvalue = value
+    unused = value
   end function json_io_input_get_type_string
+
 
   function json_io_input_get_type_integer(value) result(type)
     integer, intent(in) :: value
-    integer :: newvalue
+    integer :: unused
     character(len=7) :: type
     type = 'integer'
-    newvalue = value
+    unused = value
   end function json_io_input_get_type_integer
+
 
   function json_io_input_get_type_realdp(value) result(type)
     real(real_dp), intent(in) :: value
-    real(real_dp) :: newvalue
+    real(real_dp) :: unused
     character(len=6) :: type
     type = 'realdp'
-    newvalue = value
+    unused = value
   end function json_io_input_get_type_realdp
-
-  ! function json_io_get_real_array(variables)
-  !
-  ! end function json_io_get_real_array
 end module input

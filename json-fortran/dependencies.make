@@ -3,4 +3,4 @@
 # json-fortran dependencies
 json-fortran_dependencies = json_kinds json_parameters json_string_utilities json_value_module json_file_module
 # All files of json-fortran
-json-fortran = json_module $(json-fortran_dependencies)
+json-fortran = $(json-fortran_dependencies) json_module

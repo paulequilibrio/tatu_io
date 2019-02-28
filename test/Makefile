@@ -13,15 +13,15 @@ fc = gfortran
 # Fortran Compiler flags
 flags = -J$(build) -std=f2008 -pedantic
 
-# json_io modules files
-json_io_files = cli file types input output json_io
-# Object files relative to each source file in $(json_io_files)
-json_io = $(patsubst %, $(build)/%.o, $(json_io_files))
+# Get all json-fortran dependencies in a $(json-fortran) variable from file
+include ../json-fortran/dependencies.make
+# Adds build path and .o extension to each one of json-fortran dependencies
+json-fortran.o = $(patsubst %, $(build)/%.o, $(json-fortran))
 
-# json-fortran dependencies
-json-fortran_files = json_kinds json_parameters json_string_utilities json_value_module json_file_module json_module
-# Adds build path and .o extension to each one of json-fortran_files
-json-fortran = $(patsubst %, $(build)/%.o, $(json-fortran_files))
+# Get all json_io dependencies in a $(json_io) variable from file
+include ../dependencies.make
+# Adds build path and .o extension to each one of json_io dependencies
+json_io.o = $(patsubst %, $(build)/%.o, $(json_io))
 
 # All files matching test_*.$(ext) pattern in test directory
 test_src = $(wildcard test_*.$(ext))
@@ -37,7 +37,7 @@ default: $(executable)
 	./$(executable) -i ./data/input.json -o ./data/output.json
 
 # Create executable binary
-$(executable): $(json-fortran) $(json_io) $(build)/fruit.o $(test_obj) $(build)/$(driver).o
+$(executable): $(json-fortran.o) $(json_io.o) $(build)/fruit.o $(test_obj) $(build)/$(driver).o
 	$(fc) $(flags) -o $(@) $(^)
 
 # Compile json-fortran files

@@ -32,7 +32,7 @@ contains
     call core%create_object(output, 'output')
     call core%add(root, output)
     call write_output(output, labels, values)
-    call core%print(root, trim(adjustl(output_file)))
+    call core%print(root, trim(adjustl(output_file//'.json')))
 
     call core%destroy(root)
     if (core%failed()) stop 'Error on destroy output root'

@@ -127,7 +127,7 @@ contains
       call error('The resistivity array size must be equal to layers number.')
     end if
 
-    if (size(in%layers%thickness) /= int(in%layers%number) - 1) then
+    if (int(in%layers%number) > 1 .and. size(in%layers%thickness) /= int(in%layers%number) - 1) then
       call error('The thickness array size must be equal to layers number minus 1.')
     end if
 

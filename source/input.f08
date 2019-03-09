@@ -77,9 +77,9 @@ contains
     end select
     valid = json_io_input_check_step(initial_value_at_direction, in%transmitter%step, in%transmitter%final)
     if ( .not. valid ) then
-      if ( in%transmitter%step <= 0) then
+      if ( in%transmitter%step < 0) then
         call error('You must provide transmitter step > 0 when initial < final')
-      elseif ( in%transmitter%step >= 0) then
+      elseif ( in%transmitter%step > 0) then
         call error('You must provide transmitter step < 0 when initial > final')
       end if
     elseif (abs(in%transmitter%final - initial_value_at_direction) < eps) then
@@ -106,9 +106,9 @@ contains
     end select
     valid = json_io_input_check_step(initial_value_at_direction, in%receiver%step, in%receiver%final)
     if ( .not. valid ) then
-      if ( in%transmitter%step <= 0) then
+      if ( in%receiver%step < 0) then
         call error('You must provide receiver step > 0 when initial < final')
-      elseif ( in%transmitter%step >= 0) then
+      elseif ( in%receiver%step > 0) then
         call error('You must provide receiver step < 0 when initial > final')
       end if
     elseif (abs(in%receiver%final - initial_value_at_direction) < eps) then
@@ -219,9 +219,9 @@ contains
     logical :: isvalid
     if ( (initial < final .and. step > 0) .or. (initial > final .and. step < 0) ) then
       isvalid = .true.
-    elseif ( initial < final .and. step <= 0 ) then
+    elseif ( initial < final .and. step < 0 ) then
       isvalid = .false.
-    elseif ( initial > final .and. step >= 0 ) then
+    elseif ( initial > final .and. step > 0 ) then
       isvalid = .false.
     else
       isvalid = .true.

@@ -1,4 +1,5 @@
 module input
+  use, intrinsic :: iso_fortran_env, only: error_unit
   use json_module
   use types
 
@@ -23,11 +24,16 @@ contains
     character(len=*), intent(in) :: message
     character(len=*), intent(in), optional :: filename
     if (present(filename)) then
-      write(*, '(A)') '[ ERROR ] '//message//': '//filename
+      write(error_unit, '(a)') '[ ERROR ] '//message//': '//filename
     else
-      write(*, '(A)') '[ ERROR ] '//message
+      write(error_unit, '(a)') '[ ERROR ] '//message
     end if
-    stop
+    stop 1
+  end subroutine
+
+  subroutine warning(message)
+    character(len=*), intent(in) :: message
+    write(error_unit, '(a)') '[ WARNING ] '//message
   end subroutine
 
 
@@ -53,15 +59,15 @@ contains
     call json_io_get(json, 'transmitter.model', in%transmitter%model)
     valid = json_io_input_check_transmitter_model(in%transmitter%model)
     if ( .not. valid ) then
-      write(*,'(a)')'[ ERROR ] Invalid transmitter model: '//in%transmitter%model
-      call error('Available models: hedx, hedy, ved, hmdx, hmdy, vmd')
+      call error('Invalid transmitter model: '//trim(in%transmitter%model)// &
+                 '. Available models: hedx, hedy, ved, hmdx, hmdy, vmd')
     end if
 
     call json_io_get(json, 'transmitter.direction', in%transmitter%direction)
     valid = json_io_input_check_direction(in%transmitter%direction)
     if ( .not. valid ) then
-      write(*,'(a)')'[ ERROR ] Invalid transmitter direction: '//in%transmitter%direction
-      call error('Available directions: x, y, z')
+      call error('Invalid transmitter direction: '//in%transmitter%direction// &
+                 '. Available directions: x, y, z')
     end if
 
     call json_io_get(json, 'transmitter.initial', in%transmitter%initial)
@@ -83,14 +89,14 @@ contains
         call error('You must provide transmitter step < 0 when initial > final')
       end if
     elseif (abs(in%transmitter%final - initial_value_at_direction) < eps) then
-      write(*,'(a)') '[ WARNING ] Transmitter step will be ignored, because initial = final.'
+      call warning('Transmitter step will be ignored, because initial = final.')
     end if
 
     call json_io_get(json, 'receiver.direction', in%receiver%direction)
     valid = json_io_input_check_direction(in%receiver%direction)
     if ( .not. valid ) then
-      write(*,'(a)')'[ ERROR ] Incompatible receiver direction: '//in%receiver%direction
-      call error('Available directions: x, y, z')
+      call error('Invalid receiver direction: '//in%receiver%direction// &
+                 '. Available directions: x, y, z')
     end if
 
     call json_io_get(json, 'receiver.initial', in%receiver%initial)
@@ -112,7 +118,7 @@ contains
         call error('You must provide receiver step < 0 when initial > final')
       end if
     elseif (abs(in%receiver%final - initial_value_at_direction) < eps) then
-      write(*,'(a)') '[ WARNING ] Receiver step will be ignored, because initial = final.'
+      call warning('Receiver step will be ignored, because initial = final.')
     end if
 
     call json_io_get(json, 'frequency.initial', in%frequency%initial)

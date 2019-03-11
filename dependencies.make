@@ -1,2 +1,2 @@
-# json_io files
-json_io = file types input output json_io
+# tatu_io files
+tatu_io = file types input output tatu_io

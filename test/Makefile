@@ -18,10 +18,10 @@ include ../json-fortran/dependencies.make
 # Adds build path and .o extension to each one of json-fortran dependencies
 json-fortran.o = $(patsubst %, $(build)/%.o, $(json-fortran))
 
-# Get all json_io dependencies in a $(json_io) variable from file
+# Get all tatu_io dependencies in a $(tatu_io) variable from file
 include ../dependencies.make
-# Adds build path and .o extension to each one of json_io dependencies
-json_io.o = $(patsubst %, $(build)/%.o, $(json_io))
+# Adds build path and .o extension to each one of tatu_io dependencies
+tatu_io.o = $(patsubst %, $(build)/%.o, $(tatu_io))
 
 # All files matching test_*.$(ext) pattern in test directory
 test_src = $(wildcard test_*.$(ext))
@@ -37,14 +37,14 @@ default: $(executable)
 	./$(executable) -i ./data/input.json -o ./data/output.json
 
 # Create executable binary
-$(executable): $(json-fortran.o) $(json_io.o) $(build)/fruit.o $(test_obj) $(build)/$(driver).o
+$(executable): $(json-fortran.o) $(tatu_io.o) $(build)/fruit.o $(test_obj) $(build)/$(driver).o
 	$(fc) $(flags) -o $(@) $(^)
 
 # Compile json-fortran files
 $(build)/%.o: ../json-fortran/%.F90
 	$(fc) $(flags) -c $(<) -o $(@)
 
-# Compile json_io files
+# Compile tatu_io files
 $(build)/%.o: $(src)/%.$(ext)
 	$(fc) $(flags) -c $(<) -o $(@)
 

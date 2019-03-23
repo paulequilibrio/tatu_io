@@ -27,7 +27,7 @@ contains
     use, intrinsic :: iso_fortran_env, only: error_unit
     character(len=*), intent(in) :: output_file
     real(real_dp), dimension(:,:), intent(in) :: output_data
-    integer :: i, unit_file, write_status
+    integer :: unit_file, write_status
 
     10 format( 15(G24.15E3) )
     open(newunit = unit_file, file = output_file//'.ssv', status = 'replace', action = 'write', iostat = write_status)

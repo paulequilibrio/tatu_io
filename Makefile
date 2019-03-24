@@ -4,8 +4,7 @@ build = ../build
 fc = gfortran
 # Fortran Compiler flags
 # -J specifies where to put .mod files for compiled modules
-development_flags = -J$(build) -std=f2008 -pedantic -Wall -Wextra -Wimplicit-interface -fPIC -fmax-errors=1 -g -fcheck=all -fbacktrace
-production_falgs  = -J$(build) -std=f2008 -pedantic -Wall -Wextra -Wimplicit-interface -fPIC -Werror -fmax-errors=1 -O3 -march=native -ffast-math -funroll-loops
+io_flags  = -J$(build) -std=f2008 -pedantic -Wall -Wextra -Wimplicit-interface -fPIC -Werror -fmax-errors=1 -O3 -march=native -ffast-math -funroll-loops
 
 # If not exist, create build directory
 $(shell mkdir -p $(build))
@@ -26,7 +25,7 @@ jsonfortran:
 
 # Compile tatu_io files
 $(build)/%.o: source/%.f08
-	$(fc) $(development_flags) -c $(<) -o $(@)
+	$(fc) $(io_flags) -c $(<) -o $(@)
 
 clean:
 	rm -rf $(build)
